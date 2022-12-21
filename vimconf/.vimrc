@@ -88,15 +88,14 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Enable syntax highlighting
-syntax enable
-
 " Enable 256 colors palette in Gnome Terminal
 if $COLORTERM == 'gnome-terminal'
     set t_Co=256
 endif
 
+" Enable syntax highlighting
 set background=dark
+syntax enable
 
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
@@ -274,38 +273,6 @@ endfunction
 
 " " ALE settings
 " 
-" " Set the regex engine to auto
-"     
-" " Set up linters and fixers
-" let g:ale_fixers = {
-" \ '*': ['remove_trailing_lines', 'trim_whitespace'],
-" \ 'javascript': [
-" \   'eslint',
-" \   ],
-" \ 'typescript': [
-" \   'prettier',
-" \   'eslint',
-" \   ],
-" \ }
-" let g:ale_fix_on_save = 1
-" let g:ale_floating_preview = 1
-" 
-" augroup HoverAfterComplete
-"     autocmd!
-"     " display argument list of the selected completion candidate using ALEHover
-"     autocmd User ALECompletePost ALEHover
-"     augroup END
-" 
-" " Enable completion where available
-" " This setting must be set before ALE is loaded
-" let g:ale_completion_enabled = 1
-" 
-" " Load all plugins
-" packloadall
-" " Load all of the helptags
-" silent! helptags ALL
-" 
-
 " Just in case
 set re=0
 
@@ -339,33 +306,12 @@ else
   set signcolumn=yes
 endif
 
-" " Use tab for trigger completion with characters ahead and navigate.
-" " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" " other plugin before putting this into your config.
-" " NOTE: switched to the recommended <C-e> and <C-y>
-" inoremap <silent><expr> <TAB>
-"       \ pumvisible() ? "\<C-n>" :
-"       \ CheckBackspace() ? "\<TAB>" :
-"       \ coc#refresh()
-" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-"
-" function! CheckBackspace() abort
-"   let col = col('.') - 1
-"   return !col || getline('.')[col - 1]  =~# '\s'
-" endfunction
-
 " Use <c-space> to trigger completion.
 if has('nvim')
   inoremap <silent><expr> <c-space> coc#refresh()
 else
   inoremap <silent><expr> <c-@> coc#refresh()
 endif
-
-" " Make <CR> auto-select the first completion item and notify coc.nvim to
-" " format on enter, <cr> could be remapped by other vim plugin
-" " NOTE: switched to the recommended <C-e> and <C-y>
-" inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-"                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -397,7 +343,6 @@ nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
-" nmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  :Format<cr>
 
 augroup mygroup
@@ -494,6 +439,8 @@ inoremap (( ()<left>
 inoremap [[ []<left>
 inoremap {{ {}<left>
 inoremap {<CR> {<CR>}<ESC>O
+inoremap [<CR> [<CR>]<ESC>O
+inoremap <> <><left>
 
 " Load all plugins
 packloadall
@@ -530,6 +477,11 @@ let g:NERDToggleCheckAllLines = 1
 if (has("termguicolors"))
   set termguicolors
 endif
+
+let g:onedark_color_overrides = {
+      \ "foreground":  { "gui": "#FFBDEC", "cterm": "145", "cterm16": "NONE" },
+      \ "background":  { "gui": "#0D0C13", "cterm": "235", "cterm16": "NONE" },
+      \ }
 
 colorscheme onedark
 
