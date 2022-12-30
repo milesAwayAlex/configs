@@ -10,7 +10,7 @@ filetype indent on
 
 " Set to auto read when a file is changed from the outside
 set autoread
-au FocusGained,BufEnter * checktime
+au BufEnter * if mode() !~# '^c' | checktime | endif
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
@@ -130,6 +130,7 @@ set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
 
+set virtualedit=block
 
 """"""""""""""""""""""""""""""
 " => Visual mode related
@@ -146,31 +147,8 @@ vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 " Disable highlight when <leader><cr> is pressed
 map <silent> <leader><cr> :noh<cr>
 
-" Smart way to move between windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
-
-" Close all the buffers
-map <leader>ba :bufdo bd<cr>
-
-map <leader>l :bnext<cr>
-map <leader>h :bprevious<cr>
-
-" Useful mappings for managing tabs
-map <leader>tn :tabnew<cr>
-map <leader>to :tabonly<cr>
-map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove
-map <leader>t<leader> :tabnext
-
-" Opens a new tab with the current buffer's path
-" Super useful when editing files in the same directory
-map <leader>te :tabedit <C-r>=expand("%:p:h")<cr>/
-
-" Switch CWD to the directory of the open buffer
-map <leader>cd :cd %:p:h<cr>:pwd<cr>
+imap gb :bnext<cr>
+imap gB :bprevious<cr>
 
 " Specify the behavior when switching between buffers
 try
@@ -195,28 +173,13 @@ set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Spell checking
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Pressing ,ss will toggle and untoggle spell checking
-map <leader>ss :setlocal spell!<cr>
-
-" Shortcuts using <leader>
-map <leader>sn ]s
-map <leader>sp [s
-
+nmap <leader>sp :setlocal spell!<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Misc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Remove the Windows ^M - when the encodings gets messed up
-noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-
 " Quickly open a buffer for scribble
-map <leader>q :e ~/buffer<cr>
-
-" Quickly open a markdown buffer for scribble
-map <leader>x :e ~/buffer.md<cr>
-
-" Toggle paste mode on and off
-map <leader>pp :setlocal paste!<cr>
+nmap <leader>o :tabe<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
@@ -297,21 +260,13 @@ set updatetime=300
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
 
-" Always show the signcolumn, otherwise it would shift the text each time
-" diagnostics appear/become resolved.
-if has("nvim-0.5.0") || has("patch-8.1.1564")
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
-else
-  set signcolumn=yes
-endif
+set signcolumn=number
 
-" Use <c-space> to trigger completion.
-if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
-else
-  inoremap <silent><expr> <c-@> coc#refresh()
-endif
+" <C-y> to trigger or confirm completion
+inoremap <silent><expr> <C-y> coc#pum#visible() ? coc#pum#confirm() : coc#refresh()
+" <C-e> to cancel completion or to jump out of quotes, parens, etc.
+inoremap <silent><expr> <C-e> coc#pum#visible() ?
+            \ coc#pum#cancel() : "\e/\\%.l[\"'`)\\]}>]\r:noh\ra"
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -366,17 +321,6 @@ nmap <leader>qf  <Plug>(coc-fix-current)
 " Run the Code Lens action on the current line.
 nmap <leader>cl  <Plug>(coc-codelens-action)
 
-" Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
-
 " Remap <C-f> and <C-b> for scroll float windows/popups.
 if has('nvim-0.4.0') || has('patch-8.2.0750')
   nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
@@ -386,11 +330,6 @@ if has('nvim-0.4.0') || has('patch-8.2.0750')
   vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
   vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
-
-" Use CTRL-S for selections ranges.
-" Requires 'textDocument/selectionRange' support of language server.
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
 
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocActionAsync('format')
@@ -408,59 +347,54 @@ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings for CoCList
 " Show all diagnostics.
-nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+nnoremap <silent> <leader>ld  :<C-u>CocList diagnostics<cr>
 " Manage extensions.
-nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+nnoremap <silent> <leader>le  :<C-u>CocList extensions<cr>
 " Show commands.
-nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+nnoremap <silent> <leader>lc  :<C-u>CocList commands<cr>
 " Find symbol of current document.
-nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+nnoremap <silent> <leader>lo  :<C-u>CocList outline<cr>
 " Search workspace symbols.
-nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+nnoremap <silent> <leader>ls  :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
-nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+nnoremap <silent> <leader>lj  :<C-u>CocNext<CR>
 " Do default action for previous item.
-nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+nnoremap <silent> <leader>lk  :<C-u>CocPrev<CR>
 " Resume latest coc list.
-nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+nnoremap <silent> <leader>lp  :<C-u>CocListResume<CR>
 
 " Use <C-l> for trigger snippet expand.
 imap <C-l> <Plug>(coc-snippets-expand)
 
 " Custom Mappings
 " Close the floating windows
-nmap <Esc><Esc> :call coc#float#close_all()<cr>
+nnoremap <leader>cc :call coc#float#close_all()<CR>
 
 " autoclose pairs
-inoremap "" ""<left>
-inoremap '' ''<left>
-inoremap `` ``<left>
-inoremap (( ()<left>
-inoremap [[ []<left>
-inoremap {{ {}<left>
+noremap! "" ""<left>
+noremap! '' ''<left>
+noremap! `` ``<left>
+noremap! (( ()<left>
+noremap! [[ []<left>
+noremap! {{ {}<left>
+noremap! <> <><left>
 inoremap {<CR> {<CR>}<ESC>O
 inoremap [<CR> [<CR>]<ESC>O
-inoremap <> <><left>
 
-" Load all plugins
-packloadall
-" Load all of the helptags
-silent! helptags ALL
+let NERDTreeShowHidden = 1
+let NERDTreeMinimalUI = 1
 
-let NERDTreeShowHidden=1
-let NERDTreeMinimalUI=1
 nnoremap <C-t> :NERDTreeToggle<cr>
 
-let g:gitgutter_preview_win_floating=1
+let g:gitgutter_preview_win_floating = 1
 
-" Create default mappings
-let g:NERDCreateDefaultMappings = 1
+" Create commenter mappings
+let g:NERDCreateDefaultMappings = 0
+nmap <leader>c<Space> <Plug>NERDCommenterToggle
+xmap <leader>c<Space> <Plug>NERDCommenterToggle
 
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
-
-" Use compact syntax for prettified multi-line comments
-let g:NERDCompactSexyComs = 1
 
 " Align line-wise comment delimiters flush left instead of following code indentation
 let g:NERDDefaultAlign = 'left'
@@ -478,9 +412,14 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
+" Load all plugins
+packloadall
+" Load all of the helptags
+silent! helptags ALL
+
 let g:onedark_color_overrides = {
-      \ "foreground":  { "gui": "#FFBDEC", "cterm": "145", "cterm16": "NONE" },
-      \ "background":  { "gui": "#0D0C13", "cterm": "235", "cterm16": "NONE" },
+      \ "foreground":  { "gui": "NONE", "cterm": "NONE", "cterm16": "NONE" },
+      \ "background":  { "gui": "NONE", "cterm": "NONE", "cterm16": "NONE" },
       \ }
 
 colorscheme onedark
