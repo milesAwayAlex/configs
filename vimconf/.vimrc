@@ -1,6 +1,3 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => General
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
 set history=500
 
@@ -13,34 +10,20 @@ set autoread
 au BufEnter * if mode() !~# '^c' | checktime | endif
 
 " With a map leader it's possible to do extra key combinations
-" like <leader>w saves the current file
 let mapleader = ","
 
 " Fast saving
 nmap <leader>w :w<cr>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => VIM user interface
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
-
-" Avoid garbled characters in Chinese language windows OS
-let $LANG='en'
-set langmenu=en
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
 
 " Turn on the Wild menu
 set wildmenu
 
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
-if has("win16") || has("win32")
-    set wildignore+=.git\*,.hg\*,.svn\*
-else
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
-endif
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 
 " Always show current position
 set ruler
@@ -50,10 +33,8 @@ set number
 set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
 
-" Ignore case when searching
+" Smart-ignore case when searching
 set ignorecase
-
-" When searching try to be smart about cases
 set smartcase
 
 " Highlight search results
@@ -80,14 +61,6 @@ set novisualbell
 set t_vb=
 set tm=500
 
-" Properly disable sound on errors on MacVim
-if has("gui_macvim")
-    autocmd GUIEnter * set vb t_vb=
-endif
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Colors and Fonts
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable 256 colors palette in Gnome Terminal
 if $COLORTERM == 'gnome-terminal'
     set t_Co=256
@@ -103,19 +76,11 @@ set encoding=utf8
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Files, backups and undo
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Turn backup off, since most stuff is in SVN, git etc. anyway...
 set nobackup
 set nowb
 set noswapfile
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Text, tab and indent related
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use spaces instead of tabs
 set expandtab
 
@@ -132,23 +97,15 @@ set wrap "Wrap lines
 
 set virtualedit=block
 
-""""""""""""""""""""""""""""""
-" => Visual mode related
-""""""""""""""""""""""""""""""
 " Visual mode pressing * or # searches for the current selection
-" Super useful! From an idea by Michael Naumann
 vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
 vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Moving around, tabs, windows and buffers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Disable highlight when <leader><cr> is pressed
 map <silent> <leader><cr> :noh<cr>
 
-imap gb :bnext<cr>
-imap gB :bprevious<cr>
+nmap gb :bnext<cr>
+nmap gB :bprevious<cr>
 
 " Specify the behavior when switching between buffers
 try
@@ -160,24 +117,15 @@ endtry
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-
-""""""""""""""""""""""""""""""
-" => Status line
-""""""""""""""""""""""""""""""
 " When to show the status line
 set laststatus=0
 
 " Format the status line
 set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Spell checking
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Spell checking
 nmap <leader>sp :setlocal spell!<cr>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Misc
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Quickly open a buffer for scribble
 nmap <leader>o :tabe<cr>
 
@@ -234,24 +182,11 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
-" " ALE settings
-" 
-" Just in case
+" regex engine autoselect
 set re=0
-
-" Set internal encoding of vim, not needed on neovim, since coc.nvim using some
-" unicode characters in the file autoload/float.vim
-set encoding=utf-8
 
 " TextEdit might fail if hidden is not set.
 set hidden
-
-" Some servers have issues with backup files, see #649.
-set nobackup
-set nowritebackup
-
-" Give more space for displaying messages.
-set cmdheight=1
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
@@ -265,10 +200,8 @@ set signcolumn=number
 " <C-y> to trigger or confirm completion
 inoremap <silent><expr> <C-y> coc#pum#visible() ? coc#pum#confirm() : coc#refresh()
 " <C-e> to cancel completion or to jump out of quotes, parens, etc.
-inoremap <silent><expr> <C-e> coc#pum#visible() ?
-            \ coc#pum#cancel() : "\e/\\%.l[\"'`)\\]}>]\r:noh\ra"
+inoremap <silent><expr> <C-e> "\e/\\%.l[\"'`)\\]}>]\r:noh\ra"
 
-" Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
 nmap <silent> <leader>p <Plug>(coc-diagnostic-prev)
 nmap <silent> <leader>n <Plug>(coc-diagnostic-next)
@@ -299,6 +232,7 @@ nmap <leader>rn <Plug>(coc-rename)
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  :Format<cr>
+nmap <leader>i  :OR<cr>
 
 augroup mygroup
   autocmd!
@@ -341,8 +275,6 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
 
 " Add (Neo)Vim's native statusline support.
-" NOTE: Please see `:h coc-status` for integrations with external plugins that
-" provide custom statusline: lightline.vim, vim-airline.
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings for CoCList
@@ -366,7 +298,6 @@ nnoremap <silent> <leader>lp  :<C-u>CocListResume<CR>
 " Use <C-l> for trigger snippet expand.
 imap <C-l> <Plug>(coc-snippets-expand)
 
-" Custom Mappings
 " Close the floating windows
 nnoremap <leader>cc :call coc#float#close_all()<CR>
 
@@ -407,6 +338,9 @@ let g:NERDTrimTrailingWhitespace = 1
 
 " Enable NERDCommenterToggle to check all selected lines is commented or not 
 let g:NERDToggleCheckAllLines = 1
+
+" TODO: set coc extensions
+" let g:coc_global_extensions
 
 if (has("termguicolors"))
   set termguicolors
