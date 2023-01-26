@@ -237,7 +237,7 @@ nmap <leader>i  :OR<cr>
 augroup mygroup
   autocmd!
   " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  autocmd FileType typescript,javascript,json setl formatexpr=CocAction('formatSelected')
   " Update signature help on jump placeholder.
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
@@ -339,12 +339,29 @@ let g:NERDTrimTrailingWhitespace = 1
 " Enable NERDCommenterToggle to check all selected lines is commented or not 
 let g:NERDToggleCheckAllLines = 1
 
-" TODO: set coc extensions
-" let g:coc_global_extensions
+let g:coc_global_extensions = [ 'coc-css', 'coc-deno', 'coc-docker',
+            \ 'coc-emmet', 'coc-eslint', 'coc-html', 'coc-json', 'coc-prettier',
+            \ 'coc-prisma', 'coc-rust-analyzer', 'coc-sh', 'coc-snippets', 'coc-sql',
+            \ 'coc-tsserver', 'coc-yaml' ]
+
+let g:coc_user_config = {}
+let g:coc_user_config['colors.enable'] = 1
 
 if (has("termguicolors"))
   set termguicolors
 endif
+
+" vim plugins (goes to ~/.vim/pack/vendor/start)
+" https://github.com/neoclide/coc.nvim.git
+" https://github.com/preservim/nerdcommenter.git
+" https://github.com/preservim/nerdtree.git
+" https://github.com/joshdick/onedark.vim.git
+" https://github.com/tpope/vim-fugitive.git
+" https://github.com/airblade/vim-gitgutter.git
+" https://github.com/sheerun/vim-polyglot
+" https://github.com/pantharshit00/vim-prisma.git
+" https://github.com/honza/vim-snippets.git
+" https://github.com/tpope/vim-surround.git
 
 " Load all plugins
 packloadall
