@@ -346,6 +346,7 @@ let g:coc_global_extensions = [ 'coc-css', 'coc-deno', 'coc-docker',
 
 let g:coc_user_config = {}
 let g:coc_user_config['colors.enable'] = 1
+let g:coc_user_config['signature.preferShownAbove'] = 0
 
 if (has("termguicolors"))
   set termguicolors
