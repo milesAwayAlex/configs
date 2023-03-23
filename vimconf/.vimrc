@@ -232,6 +232,7 @@ nmap <leader>rn <Plug>(coc-rename)
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  :Format<cr>
+nmap <leader>t  :TailSort<cr>
 nmap <leader>i  :OR<cr>
 
 augroup mygroup
@@ -273,6 +274,9 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 
 " Add `:OR` command for organize imports of the current buffer.
 command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+
+" Add `:TailSort` command to sort the tailwind classes in the buffer
+command! -nargs=0 TailSort :call CocActionAsync('runCommand', 'tailwindCSS.headwind.sortTailwindClasses')
 
 " Add (Neo)Vim's native statusline support.
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
@@ -342,7 +346,7 @@ let g:NERDToggleCheckAllLines = 1
 let g:coc_global_extensions = [ 'coc-css', 'coc-deno', 'coc-docker',
             \ 'coc-emmet', 'coc-eslint', 'coc-html', 'coc-json', 'coc-prettier',
             \ 'coc-prisma', 'coc-rust-analyzer', 'coc-sh', 'coc-snippets', 'coc-sql',
-            \ 'coc-tsserver', 'coc-yaml' ]
+            \ 'coc-tsserver', 'coc-yaml', '@yaegassy/coc-tailwindcss3' ]
 
 let g:coc_user_config = {}
 let g:coc_user_config['colors.enable'] = 1
