@@ -313,6 +313,7 @@ noremap! (( ()<left>
 noremap! [[ []<left>
 noremap! {{ {}<left>
 noremap! <> <><left>
+inoremap (<CR> (<CR>)<ESC>O
 inoremap {<CR> {<CR>}<ESC>O
 inoremap [<CR> [<CR>]<ESC>O
 
