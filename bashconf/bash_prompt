@@ -11,7 +11,7 @@ prompt() {
     local txtylw='\[\e[0;33m\]' # Yellow
     # local txtblu='\[\e[0;34m\]' # Blue
     # local txtpur='\[\e[0;35m\]' # Purple
-    # local txtcyn='\[\e[0;36m\]' # Cyan
+    local txtcyn='\[\e[0;36m\]' # Cyan
     # local txtwht='\[\e[0;37m\]' # White
 
     local brblk='\[\e[1;30m\]' # Black - Bright
@@ -38,7 +38,9 @@ prompt() {
       local status=" ${brred}[${txtred}${exitstatus}${brred}]${txtrst} "
     fi
 
-    PS1="${brylw}\t${txtrst}${status}${brcyn}\u${brblk}@${brcyn}\h${txtrst}${branch}${brblu}\w${txtrst}\n${jobs}${brgrn}\$${txtrst} "
+    local arch=" ${txtcyn}$(uname -m)"
+
+    PS1="${brylw}\t${txtrst}${status}${brcyn}\u${brblk}@${brcyn}\h${txtrst}${arch}${txtrst}${branch}${brblu}\w${txtrst}\n${jobs}${brgrn}\$${txtrst} "
 }
 PROMPT_COMMAND=prompt
 
